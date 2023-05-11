@@ -1,9 +1,8 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-
 import '../connections/mongoconn.dart';
 import '../global/globals.dart';
+import '../main.dart';
 
 class BookLoan extends StatefulWidget {
   const BookLoan({Key? key, required this.detailsList}) : super(key: key);
@@ -19,33 +18,84 @@ class _BookLoanState extends State<BookLoan> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Book Taken"),
+        title: Text("Books Taken"),
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(12, 86, 126, 0.545),
-        //leading: Icon(Icons.qr_code),
-        actions: [
-       IconButton(
-  icon: Icon(Icons.qr_code_2),
-  onPressed: () async {
-      final qrCodesCollection = MongoUtils.db.collection('student');
-    var qrCode = await qrCodesCollection.findOne({'register_number': registerNumber});
+        backgroundColor: Color(0xFF12276B),
+           actions: [
+  PopupMenuButton(
+    itemBuilder: (context) => [
+      PopupMenuItem(
+        child: ListTile(
+          leading: Icon(
+            Icons.qr_code_2,
+            color: Colors.white,
+          ),
+          title: Text(
+            'QR Code',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+            ),
+          ),
+          onTap: () async {
+            Navigator.pop(context); // Close the popup menu
+            final qrCodesCollection =
+                MongoUtils.db.collection('student');
+            var qrCode = await qrCodesCollection.findOne(
+              {'register_number': registerNumber},
+            );
 
-    if (qrCode != null) {
-      final qrCodeBytes = Uint8List.fromList(qrCode['qr_code'].byteList);
- // assuming the image data is stored as a binary in the 'imageData' field
-      var qrCodeImage = Image.memory(qrCodeBytes);
+            if (qrCode != null) {
+              final qrCodeBytes =
+                  Uint8List.fromList(qrCode['qr_code'].byteList);
+              var qrCodeImage = Image.memory(qrCodeBytes);
 
-      await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          content: qrCodeImage,
+              await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  content: qrCodeImage,
+                ),
+              );
+            }
+          },
         ),
-      );
-    }
-  },
-),
-      ],
-         
+      ),
+      PopupMenuItem(
+        child: ListTile(
+          leading: Icon(
+            Icons.logout,
+            color: Colors.white,
+          ),
+          title: Text(
+            'Logout',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+            ),
+          ),
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+            );
+            // Close the popup menu
+            // Perform logout logic here
+          },
+        ),
+      ),
+    ],
+    icon: Icon(
+      Icons.more_vert,
+      color: Colors.white,
+    ),
+    elevation: 20,
+    offset: Offset(0, 50),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    ),
+    color: Color(0xFF12276B),
+  ),
+],
         elevation: 20,
       ),
       body: ListView.builder(
@@ -55,9 +105,29 @@ class _BookLoanState extends State<BookLoan> {
           var returnDate = widget.detailsList[index]['return_date'].toString();
 
           return Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: ListTile(
-              title: Text(title),
-              subtitle: Text('Return Date: $returnDate'),
+              title: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(
+                'Return Date: $returnDate',
+                style: TextStyle(
+                  fontSize: 14,
+                ),
+              ),
+              trailing: Icon(
+                Icons.bookmark,
+                color: Color(0xFF12276B),
+              ),
             ),
           );
         },

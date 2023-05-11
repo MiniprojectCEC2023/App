@@ -37,107 +37,133 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF12276B),
       appBar: AppBar(
         title: Text("Student App"),
         centerTitle: true,
-        backgroundColor: Color.fromRGBO(12, 86, 126, 0.545),
-        leading: Icon(Icons.cabin),
-        elevation: 20,
+        backgroundColor: Color(0xFF12276B),
+        elevation: 0,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: Container(
-              margin: EdgeInsets.all(20),
-              padding: EdgeInsets.all(20),
-              alignment: Alignment.center,
-              height: 300,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(12, 86, 126, 0.545),
-                borderRadius: BorderRadius.circular(5),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(255, 249, 239, 239),
-                    offset: Offset(5, 5),
-                    blurRadius: 5,
-                  )
-                ],
+      body: Center(
+        child: Container(
+          margin: EdgeInsets.all(20),
+          padding: EdgeInsets.all(20),
+          alignment: Alignment.center,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.blueGrey,
+                offset: Offset(0, 2),
+                blurRadius: 10,
               ),
-              child: Column(
-                children: [
-                  Text(
-                    "Login here",
-                    style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white,
-                    ),
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "username",
-                      hintText: "username",
-                    ),
-                    controller: usernameController,
-                  ),
-                  TextField(
-                    decoration: InputDecoration(
-                      labelText: "password",
-                      hintText: "password",
-                    ),
-                    obscureText: true,
-                    maxLength: 11,
-                    controller: passwordController,
-                  ),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          final collection =
-                              MongoUtils.db.collection('student');
-                          var username = usernameController.text;
-                          var password = passwordController.text;
-
-                          var result = await collection.findOne(
-                              {'name': username, 'register_number': password});
-
-                          if (result != null) {
-                            print('Login success!');
-                            registerNumber = passwordController.text;
-                            name = usernameController.text;
-                            await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HomePage()),
-                            );
-                          } else {
-                            print('Invalid username or password');
-                          }
-                        },
-                        child: Text("Login"),
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all(
-                            Color.fromRGBO(12, 86, 126, 0.545),
-                          ),
-                          minimumSize: MaterialStateProperty.all(Size(90, 45)),
-                          textStyle: MaterialStateProperty.all(
-                            TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Login",
+                style: TextStyle(
+                  fontSize: 32,
+                  color: Color(0xFF12276B),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "Username",
+                  hintText: "Enter your username",
+                  prefixIcon: Icon(
+                    Icons.person,
+                    color: Color(0xFF12276B),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xFF12276B),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xFF12276B),
+                      width: 2,
+                    ),
+                  ),
+                ),
+                style: TextStyle(color: Color(0xFF12276B)),
+                controller: usernameController,
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: "Password",
+                  hintText: "Enter your password",
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Color(0xFF12276B),
+                  ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xFF12276B),
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: Color(0xFF12276B),
+                      width: 2,
+                    ),
+                  ),
+                ),
+                style: TextStyle(color: Color(0xFF12276B)),
+                obscureText: true,
+                maxLength: 11,
+                controller: passwordController,
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  final collection = MongoUtils.db.collection('student');
+                  var username = usernameController.text;
+                  var password = passwordController.text;
+
+                  var result = await collection.findOne(
+                    {
+                      'name': username,
+                      'register_number': password,
+                    },
+                  );
+
+                  if (result != null) {
+print('Login success!');
+registerNumber = passwordController.text;
+name = usernameController.text;
+await Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => HomePage(),
+),
+);
+} else {
+print('Invalid username or password');
+}
+},
+child: Text("Login"),
+style: ElevatedButton.styleFrom(
+backgroundColor: Color(0xFF0F6DD6),
+minimumSize: Size(180, 50),
+textStyle: TextStyle(
+fontSize: 20,
+fontWeight: FontWeight.bold,
+),
+),
+),
+],
+),
+),
+),
+);
+}
 }
