@@ -33,6 +33,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String errorMessage = ''; // Error message variable
+  bool isPasswordVisible = false; // Track password visibility
 
   @override
   Widget build(BuildContext context) {
@@ -105,6 +107,19 @@ class _LoginPageState extends State<LoginPage> {
                     Icons.lock,
                     color: Color(0xFF12276B),
                   ),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility,
+                      color: Color(0xFF12276B),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isPasswordVisible = !isPasswordVisible;
+                      });
+                    },
+                  ),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: Color(0xFF12276B),
@@ -118,8 +133,8 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 style: TextStyle(color: Color(0xFF12276B)),
-                obscureText: true,
-                maxLength: 11,
+                              obscureText: !isPasswordVisible,
+      
                 controller: passwordController,
               ),
               SizedBox(height: 20),
@@ -137,33 +152,43 @@ class _LoginPageState extends State<LoginPage> {
                   );
 
                   if (result != null) {
-print('Login success!');
-registerNumber = passwordController.text;
-name = usernameController.text;
-await Navigator.push(
-context,
-MaterialPageRoute(
-builder: (context) => HomePage(),
-),
-);
-} else {
-print('Invalid username or password');
+                    print('Login success!');
+                    registerNumber = passwordController.text;
+                    name = usernameController.text;
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HomePage(),
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      errorMessage = 'Invalid username or password'; // Set error message
+                    });
+                  }
+                },
+                child: Text("Login"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF0F6DD6),
+                  minimumSize: Size(180, 50),
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                errorMessage,
+                style: TextStyle(
+                  color: Colors.red,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
-},
-child: Text("Login"),
-style: ElevatedButton.styleFrom(
-backgroundColor: Color(0xFF0F6DD6),
-minimumSize: Size(180, 50),
-textStyle: TextStyle(
-fontSize: 20,
-fontWeight: FontWeight.bold,
-),
-),
-),
-],
-),
-),
-),
-);
-}
-}
+
